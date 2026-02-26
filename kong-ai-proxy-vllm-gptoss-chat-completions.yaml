@@ -6,6 +6,8 @@ metadata:
 plugin: ai-proxy
 config:
   route_type: llm/v1/chat
+  logging:
+    log_statistics: true
   model:
     name: openai/gpt-oss-20b
     provider: openai
