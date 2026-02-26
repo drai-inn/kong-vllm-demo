@@ -1,0 +1,81 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vllm-gptoss
+  namespace: kai-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vllm-gptoss
+  template:
+    metadata:
+      labels:
+        app: vllm-gptoss
+        kai.scheduler/queue: research
+      annotations:
+        gpu-fraction: "0.6"
+    spec:
+      runtimeClassName: nvidia
+      schedulerName: kai-scheduler
+      containers:
+        - name: vllm
+          image: vllm/vllm-openai:v0.15.0
+          ports:
+            - containerPort: 8000
+          command: ["/bin/bash", "-c"]
+          args:
+            - |
+              echo "Cleaning conflicting CUDA compat libs..."
+              rm -rf /usr/local/cuda/compat
+
+              echo "Starting vLLM..."
+              python3 -m vllm.entrypoints.openai.api_server \
+                --host 0.0.0.0 \
+                --port 8000 \
+                --model openai/gpt-oss-20b \
+                --gpu-memory-utilization 0.55
+          env:
+            - name: TZ
+              value: Pacific/Auckland
+            - name: NCCL_P2P_DISABLE
+              value: "1"
+            - name: NCCL_IB_DISABLE
+              value: "1"
+            - name: VLLM_WORKER_MULTIPROC_METHOD
+              value: "spawn"
+          resources:
+            requests:
+              cpu: "4"
+              memory: "12Gi"
+            limits:
+              cpu: "4"
+              memory: "12Gi"
+          volumeMounts:
+            - name: mps
+              mountPath: /mps/nvidia.com/gpu/pipe
+            - name: dshm
+              mountPath: /dev/shm
+      volumes:
+        - name: mps
+          hostPath:
+            path: /mps/nvidia.com/gpu/pipe
+            type: DirectoryOrCreate
+        - name: dshm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 4Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vllm-gptoss-service
+  namespace: kai-test
+spec:
+  selector:
+    app: vllm-gptoss
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000

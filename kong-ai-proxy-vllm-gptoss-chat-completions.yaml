@@ -1,0 +1,13 @@
+apiVersion: configuration.konghq.com/v1
+kind: KongPlugin
+metadata:
+  name: ai-proxy-vllm-gptoss
+  namespace: kai-test
+plugin: ai-proxy
+config:
+  route_type: llm/v1/chat
+  model:
+    name: openai/gpt-oss-20b
+    provider: openai
+    options:
+      upstream_url: http://vllm-gptoss-service.kai-test.svc.cluster.local:8000/v1/chat/completions

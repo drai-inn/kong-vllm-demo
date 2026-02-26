@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: vllm-gptoss-models-ingress
+  namespace: kai-test
+  annotations:
+    konghq.com/plugins: key-auth-vllm
+spec:
+  ingressClassName: kong
+  tls:
+  - hosts:
+    - llm.test.drai.auckland.ac.nz
+    secretName: vllm-gptoss-tls-cert 
+  rules:
+  - host: llm.test.drai.auckland.ac.nz
+    http:
+      paths:
+      - path: /v1/models
+        pathType: Exact
+        backend:
+          service:
+            name: vllm-gptoss-service
+            port:
+              number: 8000

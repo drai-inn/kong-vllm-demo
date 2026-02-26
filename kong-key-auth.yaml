@@ -1,0 +1,14 @@
+apiVersion: configuration.konghq.com/v1
+kind: KongPlugin
+metadata:
+  name: key-auth-vllm
+  namespace: kai-test
+  annotations:
+    kubernetes.io/ingress.class: kong
+plugin: key-auth
+config:
+  key_names:
+    - apikey
+    - Authorization
+  key_in_header: true
+  key_in_query: false

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DRAI API Portal</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; text-align: center; }
+        .box { border: 1px solid #ddd; padding: 20px; border-radius: 8px; background: #f9f9f9; }
+        .btn { background: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; }
+        .key { font-family: monospace; background: #333; color: #0f0; padding: 15px; font-size: 1.2em; word-break: break-all; }
+    </style>
+</head>
+<body>
+    <h1>DRAI API Portal</h1>
+
+    {% if user %}
+        <div class="box">
+            <p>Welcome, <strong>{{ user.preferred_username }}</strong></p>
+
+            {% if new_api_key %}
+                <h3>Your New API Key:</h3>
+                <div class="key">{{ new_api_key }}</div>
+                <p style="color: red; font-size: 0.9em;">Save this now! It may not be shown again.</p>
+            {% elif existing_api_key %}
+                <h3>Your API Key:</h3>
+                <div class="key">{{ existing_api_key }}</div>
+            {% else %}
+                <form action="/generate-key" method="post">
+                    <button type="submit" class="btn">Generate New API Key</button>
+                </form>
+            {% endif %}
+
+            <br><br>
+            <a href="/logout">Logout</a>
+        </div>
+    {% else %}
+        <a href="{{ keycloak_login_url }}" class="btn">Login via Keycloak</a>
+    {% endif %}
+
+    {% if error %}
+        <p style="color:red">Error: {{ error }}</p>
+    {% endif %}
+</body>
+</html>
