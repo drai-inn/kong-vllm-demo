@@ -1,4 +1,17 @@
 ---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: vllm-gptoss-pvc
+  namespace: kai-test
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: ceph-ssd
+  resources:
+    requests:
+      storage: 100Gi
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -21,7 +34,7 @@ spec:
       schedulerName: kai-scheduler
       containers:
         - name: vllm
-          image: vllm/vllm-openai:v0.15.0
+          image: vllm/vllm-openai:v0.16.0
           ports:
             - containerPort: 8000
           command: ["/bin/bash", "-c"]
@@ -45,6 +58,12 @@ spec:
               value: "1"
             - name: VLLM_WORKER_MULTIPROC_METHOD
               value: "spawn"
+            - name: HF_HOME
+              value: /models/hf
+            - name: VLLM_CACHE_ROOT
+              value: /models/vllm_cache_root
+            - name: VLLM_CONFIG_ROOT
+              value: /models/vllm_config_root
           resources:
             requests:
               cpu: "4"
@@ -57,6 +76,8 @@ spec:
               mountPath: /mps/nvidia.com/gpu/pipe
             - name: dshm
               mountPath: /dev/shm
+            - name: models
+              mountPath: /models
       volumes:
         - name: mps
           hostPath:
@@ -66,6 +87,9 @@ spec:
           emptyDir:
             medium: Memory
             sizeLimit: 4Gi
+        - name: models
+          persistentVolumeClaim:
+            claimName: vllm-gptoss-pvc
 ---
 apiVersion: v1
 kind: Service
