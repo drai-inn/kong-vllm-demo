@@ -7,9 +7,9 @@ def main():
     )
 
     completion = client.chat.completions.create(
-        model="openai/gpt-oss-20b",
+        model="Qwen3.5-35B-A3B",
         messages=[
-            {"role": "developer", "content": "Talk like a pirate."},
+            {"role": "system", "content": "Talk like a pirate."},
             {
                 "role": "user",
                 "content": "How do I check if a Python object is an instance of a class?",

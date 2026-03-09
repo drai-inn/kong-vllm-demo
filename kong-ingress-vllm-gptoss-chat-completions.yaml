@@ -5,7 +5,7 @@ metadata:
   namespace: kai-test
   annotations:
     cert-manager.io/cluster-issuer: "zerossl-kong-issuer"
-    konghq.com/plugins: key-auth-vllm, ai-proxy-vllm-gptoss
+    konghq.com/plugins: key-auth-vllm, ai-proxy-vllm-gptoss, ai-proxy-logger
 spec:
   ingressClassName: kong
   tls:

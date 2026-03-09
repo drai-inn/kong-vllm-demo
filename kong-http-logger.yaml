@@ -1,0 +1,12 @@
+---
+apiVersion: configuration.konghq.com/v1
+kind: KongPlugin
+metadata:
+  name: ai-proxy-logger
+  namespace: kai-test
+plugin: http-log
+config:
+  http_endpoint: http://ai-log-receiver.kai-test.svc.cluster.local/
+  method: POST
+  timeout: 1000
+  keepalive: 1000

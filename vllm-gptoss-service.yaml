@@ -34,7 +34,7 @@ spec:
       schedulerName: kai-scheduler
       containers:
         - name: vllm
-          image: vllm/vllm-openai:v0.16.0
+          image: vllm/vllm-openai:v0.17.0
           ports:
             - containerPort: 8000
           command: ["/bin/bash", "-c"]
@@ -47,8 +47,11 @@ spec:
               python3 -m vllm.entrypoints.openai.api_server \
                 --host 0.0.0.0 \
                 --port 8000 \
-                --model openai/gpt-oss-20b \
-                --gpu-memory-utilization 0.55
+                --model cyankiwi/Qwen3.5-35B-A3B-AWQ-4bit \
+                --served-model-name Qwen3.5-35B-A3B \
+                --kv-cache-dtype fp8 \
+                --language-model-only --reasoning_parser qwen3 \
+                --gpu-memory-utilization 0.85
           env:
             - name: TZ
               value: Pacific/Auckland

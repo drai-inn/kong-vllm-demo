@@ -9,7 +9,7 @@ config:
   logging:
     log_statistics: true
   model:
-    name: openai/gpt-oss-20b
+    name: Qwen3.5-35B-A3B
     provider: openai
     options:
       upstream_url: http://vllm-gptoss-service.kai-test.svc.cluster.local:8000/v1/chat/completions
