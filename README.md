@@ -67,6 +67,11 @@ Add cluster issuer for kong (not shown here).
 
 ## Run vLLM service
 
+Apply the configmap with custom chat template for Qwen3.5 (allows developer role):
+```
+kubectl create configmap vllm-chat-template --from-file=chat-template.j2 -n kai-test
+```
+
 Launch the vLLM service:
 ```
 kubectl apply -f vllm-gptoss-service.yaml

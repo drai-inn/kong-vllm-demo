@@ -49,8 +49,11 @@ spec:
                 --port 8000 \
                 --model cyankiwi/Qwen3.5-35B-A3B-AWQ-4bit \
                 --served-model-name Qwen3.5-35B-A3B \
+                --chat-template /templates/chat-template.j2 \
                 --kv-cache-dtype fp8 \
-                --language-model-only --reasoning_parser qwen3 \
+                --language-model-only \
+                --reasoning_parser qwen3 \
+                --enable-auto-tool-choice --tool-call-parser qwen3_coder \
                 --gpu-memory-utilization 0.85
           env:
             - name: TZ
@@ -81,6 +84,9 @@ spec:
               mountPath: /dev/shm
             - name: models
               mountPath: /models
+            - name: chat-template
+              mountPath: /templates/chat-template.j2
+              subPath: chat-template.j2
       volumes:
         - name: mps
           hostPath:
@@ -93,6 +99,9 @@ spec:
         - name: models
           persistentVolumeClaim:
             claimName: vllm-gptoss-pvc
+        - name: chat-template
+          configMap:
+            name: vllm-chat-template
 ---
 apiVersion: v1
 kind: Service
