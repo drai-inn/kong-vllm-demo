@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: vllm-gptoss-pvc
+  name: vllm-embedding-pvc
   namespace: kai-test
 spec:
   accessModes:
@@ -10,25 +10,25 @@ spec:
   storageClassName: ceph-ssd
   resources:
     requests:
-      storage: 100Gi
+      storage: 10Gi
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: vllm-gptoss
+  name: vllm-embedding
   namespace: kai-test
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: vllm-gptoss
+      app: vllm-embedding
   template:
     metadata:
       labels:
-        app: vllm-gptoss
+        app: vllm-embedding
         kai.scheduler/queue: research
       annotations:
-        gpu-fraction: "0.6"
+        gpu-fraction: "0.2"
     spec:
       runtimeClassName: nvidia
       schedulerName: kai-scheduler
@@ -47,14 +47,11 @@ spec:
               python3 -m vllm.entrypoints.openai.api_server \
                 --host 0.0.0.0 \
                 --port 8000 \
-                --model cyankiwi/Qwen3.5-35B-A3B-AWQ-4bit \
-                --served-model-name Qwen3.5-35B-A3B \
-                --chat-template /templates/chat-template.j2 \
-                --kv-cache-dtype fp8 \
-                --language-model-only \
-                --reasoning_parser qwen3 \
-                --enable-auto-tool-choice --tool-call-parser qwen3_coder \
-                --gpu-memory-utilization 0.75
+                --model Qwen/Qwen3-VL-Embedding-2B \
+                --served-model-name Qwen3-VL-Embedding-2B \
+                --max-model-len 8192 \
+                --runner pooling \
+                --gpu-memory-utilization 0.15
           env:
             - name: TZ
               value: Pacific/Auckland
@@ -73,10 +70,10 @@ spec:
           resources:
             requests:
               cpu: "4"
-              memory: "12Gi"
+              memory: "8Gi"
             limits:
               cpu: "4"
-              memory: "12Gi"
+              memory: "8Gi"
           volumeMounts:
             - name: mps
               mountPath: /mps/nvidia.com/gpu/pipe
@@ -84,9 +81,6 @@ spec:
               mountPath: /dev/shm
             - name: models
               mountPath: /models
-            - name: chat-template
-              mountPath: /templates/chat-template.j2
-              subPath: chat-template.j2
       volumes:
         - name: mps
           hostPath:
@@ -98,19 +92,16 @@ spec:
             sizeLimit: 4Gi
         - name: models
           persistentVolumeClaim:
-            claimName: vllm-gptoss-pvc
-        - name: chat-template
-          configMap:
-            name: vllm-chat-template
+            claimName: vllm-embedding-pvc
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: vllm-gptoss-service
+  name: vllm-embedding-service
   namespace: kai-test
 spec:
   selector:
-    app: vllm-gptoss
+    app: vllm-embedding
   ports:
     - protocol: TCP
       port: 8000

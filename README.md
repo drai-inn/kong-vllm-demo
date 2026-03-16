@@ -77,6 +77,11 @@ Launch the vLLM service:
 kubectl apply -f vllm-gptoss-service.yaml
 ```
 
+Launch the embedding model:
+```
+kubectl apply -f vllm-embedding-service.yaml
+```
+
 ## Setup access to vLLM via Kong
 
 Add the key-auth plugin, which will enforce API key authentication:
@@ -98,6 +103,13 @@ Add the ingress for the models endpoint (just using key-auth plugin):
 ```
 kubectl apply -f kong-ingress-vllm-gptoss-models.yaml
 ```
+
+Apply ingress for embeddings endpoint:
+```
+kubectl apply -f kong-ingress-vllm-embedding.yaml
+```
+
+Note: cannot use AI proxy with the embedding endpoint as it requires kong 3.11 and we have 3.9. Just ingress straight to vLLM with key-auth plugin.
 
 ## Deploy the demo portal for creating API keys
 

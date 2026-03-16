@@ -1,0 +1,15 @@
+apiVersion: configuration.konghq.com/v1
+kind: KongPlugin
+metadata:
+  name: ai-proxy-vllm-embedding
+  namespace: kai-test
+plugin: ai-proxy
+config:
+  route_type: llm/v1/embeddings
+  logging:
+    log_statistics: true
+  model:
+    name: Qwen3-VL-Embedding-2B
+    provider: openai
+    options:
+      upstream_url: http://vllm-embedding-service.kai-test.svc.cluster.local:8000/v1/embeddings
