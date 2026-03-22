@@ -7,7 +7,7 @@ def main():
     )
 
     completion = client.chat.completions.create(
-        model="Qwen3.5-35B-A3B",
+        model="gpt-oss-20b",
         messages=[
             {"role": "developer", "content": "Talk like a pirate."},
             {
