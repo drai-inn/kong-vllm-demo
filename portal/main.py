@@ -19,6 +19,8 @@ CLIENT_ID = os.getenv("KEYCLOAK_CLIENT_ID", "portal-client")
 CLIENT_SECRET = os.getenv("KEYCLOAK_CLIENT_SECRET", "change-me")
 APP_URL = os.getenv("APP_URL", "http://localhost:8000")
 NAMESPACE = "kai-test"
+LITELLM_API_URL = os.getenv("LITELLM_API_URL", "http://litellm.localhost")
+LITELLM_MASTER_KEY = os.getenv("LITELLM_MASTER_KEY", "dummy-master-key")
 
 # Keycloak Setup
 keycloak_openid = KeycloakOpenID(
@@ -214,6 +216,37 @@ async def generate_key(request: Request):
                     raise Exception(f"Failed to update existing consumer: {update_error}")
             else:
                 raise  # Re-raise if it's not a 400 error
+        
+        # 3. Create LiteLLM User and Key
+        try:
+            with httpx.Client(base_url=LITELLM_API_URL) as client:
+                # Create User
+                user_payload = {
+                    "user_id": user_id,
+                    "user_email": email,
+                    "auto_create_key": False
+                }
+                headers = {"Authorization": f"Bearer {LITELLM_MASTER_KEY}"}
+                response = client.post("/user/new", json=user_payload, headers=headers)
+                response.raise_for_status()
+
+                # Create Key
+                key_payload = {
+                    "key": api_key_value,
+                    "user_id": user_id
+                }
+                response = client.post("/key/generate", json=key_payload, headers=headers)
+                response.raise_for_status()
+        except httpx.HTTPStatusError as e:
+            # Clean up Kong resources if LiteLLM fails
+            k8s_core_api.delete_namespaced_secret(secret_name, NAMESPACE)
+            # k8s_custom_api.delete_namespaced_custom_object(...) # decide if we should delete the consumer
+            raise Exception(f"Failed to create LiteLLM resources: {e.response.text}")
+        except Exception as e:
+            # Clean up Kong resources if LiteLLM fails
+            k8s_core_api.delete_namespaced_secret(secret_name, NAMESPACE)
+            raise Exception(f"An unexpected error occurred with LiteLLM: {e}")
+
 
         return templates.TemplateResponse("index.html", {
             "request": request, 
