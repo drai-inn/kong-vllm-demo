@@ -220,23 +220,42 @@ async def generate_key(request: Request):
         # 3. Create LiteLLM User and Key
         try:
             with httpx.Client(base_url=LITELLM_API_URL) as client:
-                # Create User
-                user_payload = {
-                    "user_id": user_id,
-                    "user_email": email,
-                    "auto_create_key": False
-                }
                 headers = {"Authorization": f"Bearer {LITELLM_MASTER_KEY}"}
-                response = client.post("/user/new", json=user_payload, headers=headers)
-                response.raise_for_status()
 
-                # Create Key
-                key_payload = {
-                    "key": api_key_value,
-                    "user_id": user_id
-                }
-                response = client.post("/key/generate", json=key_payload, headers=headers)
-                response.raise_for_status()
+                # Check if user exists, create if not
+                try:
+                    client.get(f"/user/info?user_id={user_id}", headers=headers).raise_for_status()
+                    print(f"LiteLLM user {user_id} already exists.")
+                except httpx.HTTPStatusError as e:
+                    if e.response.status_code == 404:
+                        print(f"LiteLLM user {user_id} not found, creating...")
+                        user_payload = {
+                            "user_id": user_id,
+                            "user_email": email,
+                            "auto_create_key": False
+                        }
+                        response = client.post("/user/new", json=user_payload, headers=headers)
+                        response.raise_for_status()
+                    else:
+                        raise
+
+                # Check if key exists, create if not
+                try:
+                    client.get(f"/key/info?key={api_key_value}", headers=headers).raise_for_status()
+                    print(f"LiteLLM key already exists for user {user_id}.")
+                except httpx.HTTPStatusError as e:
+                    if e.response.status_code == 404:
+                        print(f"LiteLLM key for user {user_id} not found, creating...")
+                        key_payload = {
+                            "key": api_key_value,
+                            "user_id": user_id
+                        }
+                        response = client.post("/key/generate", json=key_payload, headers=headers)
+                        response.raise_for_status()
+                        print(f"LiteLLM key created for user {user_id}.")
+                    else:
+                        raise
+
         except httpx.HTTPStatusError as e:
             # Clean up Kong resources if LiteLLM fails
             k8s_core_api.delete_namespaced_secret(secret_name, NAMESPACE)
