@@ -18,7 +18,7 @@ rules:
   # Permission to manage KongConsumers
   - apiGroups: ["configuration.konghq.com"]
     resources: ["kongconsumers"]
-    verbs: ["create", "get", "patch", "delete"]
+    verbs: ["create", "get", "patch", "delete", list]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -52,7 +52,7 @@ spec:
       serviceAccountName: api-portal-sa
       containers:
       - name: api-portal
-        image: cdjs/kong-portal:dev
+        image: cdjs/kong-portal:litellm
         imagePullPolicy: Always
         env:
         - name: KEYCLOAK_URL
@@ -68,6 +68,13 @@ spec:
               key: keycloak-client-secret
         - name: APP_URL
           value: "https://portal.test.drai.auckland.ac.nz"
+        - name: LITELLM_API_URL
+          value: "http://litellm.litellm.svc.cluster.local:4000"
+        - name: LITELLM_MASTER_KEY
+          valueFrom:
+            secretKeyRef:
+              name: portal-secrets
+              key: litellm-master-key
         ports:
         - containerPort: 8000
         resources:

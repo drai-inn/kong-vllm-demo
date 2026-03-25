@@ -127,7 +127,8 @@ async def generate_key(request: Request):
         # TODO: key name should have uuid and label should have name so can display in ui and delete, add multiple, etc
 
         # 1. Create the Secret for the API Key
-        api_key_value = secrets.token_urlsafe(32)
+        # litellm requires keys to start wiht "sk-"
+        api_key_value = f"sk-{secrets.token_urlsafe(32)}"
         kong_username = f"user-{user_id}"
 
         secret_manifest = {

@@ -13,3 +13,10 @@ To test the embedding model (after running about commands):
 ```
 uv run python test-embedding.py
 ```
+
+To test LiteLLM (make sure `OPENAI_API_KEY` is set):
+
+```
+uv run python test-litellm.py
+uv run python test-litellm-embedding.py
+```
