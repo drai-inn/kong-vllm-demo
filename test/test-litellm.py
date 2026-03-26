@@ -15,6 +15,11 @@ def main():
                 "content": "How do I check if a Python object is an instance of a class?",
             },
         ],
+        extra_body={
+            "chat_template_kwargs": {
+                "reasoning_effort": "low",
+            },
+        },
     )
 
     print(completion.choices[0].message.content)
