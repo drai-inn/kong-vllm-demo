@@ -44,4 +44,5 @@ proxy_config:
         api_key: dummy
 
 # Additional environment variables to be added to the deployment as a map of key-value pairs
-envVars: {}
+envVars:
+  STORE_MODEL_IN_DB: "True"
