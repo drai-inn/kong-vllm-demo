@@ -24,6 +24,24 @@ ingress:
       hosts:
         - litellm.test.drai.auckland.ac.nz
 
+extraContainers:
+  - name: tailscale
+    image: tailscale/tailscale:v1.94.2
+    env:
+      - name: TS_AUTHKEY
+        valueFrom:
+          secretKeyRef:
+            name: tailscale-auth
+            key: TS_AUTHKEY
+      - name: TS_USERSPACE
+        value: "false"
+      - name: TS_KUBE_SECRET
+        value: ""
+      - name: TS_STATE_DIR
+        value: "/tmp"
+    securityContext:
+      privileged: true
+
 # The elements within proxy_config are rendered as config.yaml for the proxy
 #  Examples: https://github.com/BerriAI/litellm/tree/main/litellm/proxy/example_config_yaml
 #  Reference: https://docs.litellm.ai/docs/proxy/configs
@@ -41,6 +59,11 @@ proxy_config:
       litellm_params:
         model: hosted_vllm/Qwen3-VL-Embedding-2B
         api_base: http://vllm-embedding-service.kai-test.svc.cluster.local:8000/v1
+        api_key: dummy
+    - model_name: gpt-oss-120b
+      litellm_params:
+        model: hosted_vllm/openai/gpt-oss-120b
+        api_base: http://100.92.18.86:8000/v1
         api_key: dummy
 
 # Additional environment variables to be added to the deployment as a map of key-value pairs

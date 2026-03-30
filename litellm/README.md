@@ -5,6 +5,12 @@ Install:
 ```
 kubectl apply -f namespace.yaml
 kubectl apply -f litellm-test-secret.yaml
+```
+
+Create an auth key in tailscale and create the `tailscale-auth` secret in `litellm`
+namespace. Then:
+
+```
 helm install -n litellm -f values.yaml litellm ./litellm-helm-1.82.3.tgz
 ```
 
