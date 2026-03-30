@@ -1,7 +1,7 @@
 image:
   repository: ghcr.io/berriai/litellm-database
   pullPolicy: Always
-  tag: "main-v1.82.3-stable.patch.2"
+  tag: "main-v1.82.6.rc.2"
 
 # A list of Kubernetes Secret objects that will be exported to the LiteLLM proxy
 #  pod as environment variables.  These secrets can then be referenced in the
