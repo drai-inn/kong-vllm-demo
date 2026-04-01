@@ -60,9 +60,9 @@ proxy_config:
         model: hosted_vllm/Qwen3-VL-Embedding-2B
         api_base: http://vllm-embedding-service.kai-test.svc.cluster.local:8000/v1
         api_key: dummy
-    - model_name: gpt-oss-120b
+    - model_name: Qwen3.5-35B-A3B
       litellm_params:
-        model: hosted_vllm/openai/gpt-oss-120b
+        model: hosted_vllm//models/Qwen3.5-35B-A3B
         api_base: http://100.92.18.86:8000/v1
         api_key: dummy
 
