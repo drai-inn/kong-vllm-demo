@@ -70,7 +70,11 @@ proxy_config:
         model: hosted_vllm/Qwen/Qwen3.5-122B-A10B-FP8
         api_base: http://100.92.18.86:8000/v1
         api_key: dummy
-
+    - model_name: gemma-4-31B-it
+      litellm_params:
+        model: hosted_vllm/google/gemma-4-31B-it
+        api_base: http://100.92.18.86:8000/v1
+        api_key: dummy
 # Additional environment variables to be added to the deployment as a map of key-value pairs
 envVars:
   STORE_MODEL_IN_DB: "True"
