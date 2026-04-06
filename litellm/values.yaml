@@ -75,6 +75,11 @@ proxy_config:
         model: hosted_vllm/google/gemma-4-31B-it
         api_base: http://100.92.18.86:8000/v1
         api_key: dummy
+    - model_name: nemotron-3-super
+      litellm_params:
+        model: openai/nemotron-3-super
+        api_base: os.environ/OTHER_LITELLM_URL
+        api_key: os.environ/OTHER_LITELLM_KEY
 # Additional environment variables to be added to the deployment as a map of key-value pairs
 envVars:
   STORE_MODEL_IN_DB: "True"
