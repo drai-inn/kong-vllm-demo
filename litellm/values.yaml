@@ -90,9 +90,9 @@ proxy_config:
         model: hosted_vllm/Qwen3-Embedding-8B
         api_base: http://100.92.18.86:8001/v1
         api_key: dummy
-    - model_name: F2LLM-v2-14B
+    - model_name: F2LLM-v2-4B
       litellm_params:
-        model: hosted_vllm/F2LLM-v2-14B
+        model: hosted_vllm/F2LLM-v2-4B
         api_base: http://100.92.18.86:8002/v1
         api_key: dummy
 # Additional environment variables to be added to the deployment as a map of key-value pairs
