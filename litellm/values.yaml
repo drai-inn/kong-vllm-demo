@@ -1,7 +1,7 @@
 image:
   repository: ghcr.io/berriai/litellm-database
   pullPolicy: Always
-  tag: "main-v1.82.6.rc.2"
+#  tag: "main-v1.82.6.rc.2"
 
 # A list of Kubernetes Secret objects that will be exported to the LiteLLM proxy
 #  pod as environment variables.  These secrets can then be referenced in the
@@ -116,6 +116,14 @@ proxy_config:
         api_key: dummy
       model_info:
         mode: embedding
+# Override PostgreSQL sub-chart image to use the node-cached image.
+# Bitnami removed versioned tags from Docker Hub; pullPolicy: IfNotPresent
+# prevents pulling and uses the already-cached image on the node.
+postgresql:
+  image:
+    tag: "latest"
+    pullPolicy: IfNotPresent
+
 # Additional environment variables to be added to the deployment as a map of key-value pairs
 envVars:
   CACHE_TYPE: "local" # "redis" or "local"
