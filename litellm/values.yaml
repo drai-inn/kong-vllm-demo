@@ -63,13 +63,34 @@ proxy_config:
         model: hosted_vllm/Qwen3-VL-Embedding-2B
         api_base: http://vllm-embedding-service.kai-test.svc.cluster.local:8000/v1
         api_key: dummy
+        # Whitelist 'dimensions' for this specific model
+        # This allows you to request 256, 512, or 1024 dims via the API
+        # Prevent LiteLLM from dropping MRL or Vision params
+        supported_openai_params: ["dimensions", "encoding_format", "user", "input_type"]
+        # PEAK PERFORMANCE: Set max dimensions
+        dimensions: 2048
+        additional_drop_params: []
+        encoding_format: ["float", "base64", "ubyte", "int8"]
       model_info:
         mode: embedding
+        base_model: "qwen3-vl"
+        # ENABLE MULTIMODAL/PDF: This flag tells LiteLLM to accept image/PDF inputs
+        supports_embedding_image_input: true
+        supports_pdf_input: true
+        supports_video_input: true
+        # Helps LiteLLM's internal tokenizer accurately count cost:
+        max_input_tokens: 32768
+        output_vector_size: 2048
     - model_name: Qwen3.6-35B-A3B
       litellm_params:
         model: hosted_vllm/Qwen3.6-35B-A3B
         api_base: http://100.92.18.86:8000/v1
         api_key: dummy
+        supported_openai_params: ["dimensions", "encoding_format", "user", "input_type"]
+        additional_drop_params: []
+        encoding_format: ["float", "base64", "ubyte", "int8"]
+      model_info:
+        base_model: "qwen3"
     - model_name: Gemma-4-26B-A4B-it
       litellm_params:
         model: hosted_vllm/gemma-4-26B-A4B-it
@@ -80,8 +101,14 @@ proxy_config:
         model: hosted_vllm/Qwen3-Embedding-4B
         api_base: http://100.92.18.86:8001/v1
         api_key: dummy
+        dimensions: 2560 # Peak for the 4B model
+        supported_openai_params: ["dimensions", "encoding_format", "user", "input_type"]
+        additional_drop_params: []
+        encoding_format: ["float", "base64", "ubyte", "int8"]
       model_info:
         mode: embedding
+        max_input_tokens: 32768  # Qwen3's actual limit
+        output_vector_size: 1024 # The native full-dimension
     - model_name: F2LLM-v2-4B
       litellm_params:
         model: hosted_vllm/F2LLM-v2-4B
@@ -91,4 +118,5 @@ proxy_config:
         mode: embedding
 # Additional environment variables to be added to the deployment as a map of key-value pairs
 envVars:
+  CACHE_TYPE: "local" # "redis" or "local"
   STORE_MODEL_IN_DB: "True"
