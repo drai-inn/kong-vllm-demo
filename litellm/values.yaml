@@ -91,10 +91,10 @@ proxy_config:
         encoding_format: ["float", "base64", "ubyte", "int8"]
       model_info:
         base_model: "qwen3"
-    - model_name: Gemma-4-26B-A4B-it
+    - model_name: gemma-4-26B-A4B-it
       litellm_params:
         model: hosted_vllm/gemma-4-26B-A4B-it
-        api_base: http://100.92.18.86:8000/v1
+        api_base: http://100.65.5.85:8000/v1
         api_key: dummy
     - model_name: Qwen3-Embedding-4B
       litellm_params:
@@ -112,7 +112,7 @@ proxy_config:
     - model_name: F2LLM-v2-4B
       litellm_params:
         model: hosted_vllm/F2LLM-v2-4B
-        api_base: http://100.92.18.86:8002/v1
+        api_base: http://100.65.5.85:8001/v1
         api_key: dummy
       model_info:
         mode: embedding
