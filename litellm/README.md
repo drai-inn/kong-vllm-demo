@@ -11,13 +11,13 @@ Create an auth key in tailscale and create the `tailscale-auth` secret in `litel
 namespace. Then:
 
 ```
-helm install -n litellm -f values.yaml litellm ./litellm-helm-1.82.3.tgz
+helm install -n litellm -f values.yaml litellm ./litellm-helm-1.83.14-stable.patch.3.tgz
 ```
 
 Output:
 
 ```
-$ helm install -n litellm -f values.yaml litellm ./litellm-helm-1.82.3.tgz
+$ helm install -n litellm -f values.yaml litellm ./litellm-helm-1.83.14-stable.patch.3.tgz
 NAME: litellm
 LAST DEPLOYED: Tue Mar 24 20:39:27 2026
 NAMESPACE: litellm
@@ -33,5 +33,5 @@ PDB: disabled. Configure via .Values.pdb.*
 Upgrade:
 
 ```
-helm upgrade -n litellm -f values.yaml litellm ./litellm-helm-1.82.3.tgz
+helm upgrade -n litellm -f values.yaml litellm ./litellm-helm-1.83.14-stable.patch.3.tgz
 ```
