@@ -134,4 +134,3 @@ postgresql:
 envVars:
   CACHE_TYPE: "local" # "redis" or "local"
   STORE_MODEL_IN_DB: "True"
-  LITELLM_LOG: "DEBUG"
