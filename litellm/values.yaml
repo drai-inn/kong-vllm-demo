@@ -24,6 +24,12 @@ ingress:
       hosts:
         - litellm.test.drai.auckland.ac.nz
 
+service:
+  annotations:
+    konghq.com/connect-timeout: "600000"
+    konghq.com/read-timeout: "600000"
+    konghq.com/write-timeout: "600000"
+
 extraContainers:
   - name: tailscale
     image: tailscale/tailscale:v1.94.2
